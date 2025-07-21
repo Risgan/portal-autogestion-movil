@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    container_name: autogestion_db
+    environment:
+      POSTGRES_USER: autogestion
+      POSTGRES_PASSWORD: autogestion
+      POSTGRES_DB: autogestion
+    ports:
+      - "5454:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped 
