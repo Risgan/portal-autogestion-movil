@@ -1,186 +1,311 @@
-# Portal de Autogestión Móvil - Microfrontends
+# Portal de Autogestión - Microfrontends
 
-## Descripción General
+Sistema de autogestión móvil desarrollado con arquitectura de microfrontends, backend Spring Boot y base de datos PostgreSQL.
 
-Este proyecto implementa un portal de autogestión para clientes de telefonía móvil, utilizando una arquitectura de microfrontends. El objetivo es permitir que diferentes equipos puedan desarrollar y desplegar módulos de manera independiente, orquestados por una Shell Application, y consumiendo servicios de un backend centralizado.
+## 🏗️ Arquitectura
 
----
+- **Shell Frontend**: Aplicación host que orquesta los microfrontends
+- **Microfrontend Facturación**: Gestión de facturas y pagos
+- **Microfrontend Cupos**: Visualización de consumo y cupos disponibles
+- **Backend**: API REST con Spring Boot
+- **Base de Datos**: PostgreSQL con datos de prueba
 
-## Estructura del Proyecto
+## 🏛️ Infraestructura
 
-La estructura propuesta es la siguiente:
+### Containerización: Docker + Docker Compose
 
-```
-/portal-autogestion-movil/
-│
-├── docker-compose.yml
-├── README.md
-│
-├── shell-frontend/           # Shell Application (Next.js, React, TS)
-│
-├── mfe-cupos/                # Microfrontend: Cupos disponibles (Next.js, React, TS)
-│
-├── mfe-billing/              # Microfrontend: Facturación (Next.js, React, TS)
-│
-├── backend/                  # Backend API (Spring Boot)
-│   ├── src/
-│   └── Dockerfile
-│
-└── db/                       # Base de datos (PostgreSQL, datos de prueba, scripts)
-    └── init.sql
-```
+El proyecto utiliza Docker y Docker Compose para garantizar un entorno de desarrollo y despliegue consistente:
 
----
+- **Contenedores independientes** para cada servicio
+- **Red dedicada** para comunicación entre servicios
+- **Volúmenes persistentes** para datos de PostgreSQL
+- **Variables de entorno** configuradas para cada servicio
+- **Dependencias automáticas** entre servicios
 
-## Comandos Iniciales para Crear la Estructura
+**Servicios contenerizados:**
+- `autogestion_db` - Base de datos PostgreSQL
+- `autogestion_backend` - API Spring Boot
+- `autogestion_shell` - Shell Frontend (Next.js)
+- `autogestion_mf_facturacion` - Microfrontend Facturación
+- `autogestion_mf_cupos` - Microfrontend Cupos
 
-### 1. Clonar el repositorio y crear carpetas base
+### Base de Datos: Contenerizada con datos de prueba
 
-```bash
-git clone https://github.com/tuusuario/portal-autogestion-movil.git
-cd portal-autogestion-movil
+- **PostgreSQL 16** ejecutándose en contenedor Docker
+- **Datos de prueba pre-cargados** para 3 usuarios con diferentes planes
+- **Script de inicialización automática** (`db/init.sql`)
+- **Persistencia de datos** mediante volúmenes Docker
+- **Configuración optimizada** para desarrollo y pruebas
 
-# Crear carpetas base
-mkdir shell-frontend mfe-cupos mfe-billing backend db
-```
+**Datos incluidos:**
+- Usuarios con diferentes planes (Básico, Premium, Empresarial)
+- Facturas históricas (2024-2025)
+- Registros de consumo y uso de servicios
+- Información de planes y tarifas
 
-### 2. Inicializar Shell Application (Next.js + TS)
 
-```bash
-cd shell-frontend
-npx create-next-app@latest . --typescript
-# Instalar dependencias adicionales
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-cd ..
-```
+## 🚀 Inicio Rápido
 
-### 3. Inicializar Microfrontends (Next.js + TS)
+### Prerrequisitos
 
-```bash
-cd mfe-cupos
-npx create-next-app@latest . --typescript
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-cd ..
+- Docker
+- Docker Compose
+- Node.js 18
+- Java 17
 
-cd mfe-billing
-npx create-next-app@latest . --typescript
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-cd ..
-```
+### Ejecutar con Docker Compose
 
-### 4. Inicializar Backend (Quarkus o Spring Boot)
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/Risgan/portal-autogestion-movil
+   
+   ```
 
-#### Opción A: Quarkus
+2. **Ejecutar toda la infraestructura**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Verificar que todos los servicios estén corriendo**
+   ```bash
+   docker-compose ps
+   ```
+
+4. **Acceder a la aplicación**
+   - Shell Portal Autogestión: http://localhost:3001
+   - Microfrontend Cupos: http://localhost:3002
+   - Microfrontend Facturación: http://localhost:3003
+   - Backend API: http://localhost:9080
+   - Base de Datos: localhost:5454
+
+### Servicios Disponibles
+
+| Servicio | Puerto | Descripción |
+|----------|--------|-------------|
+| Shell Portal Autogestión | 3001 | Aplicación host principal |
+| MF Facturación | 3002 | Microfrontend de facturas |
+| MF Cupos | 3003 | Microfrontend de cupos |
+| Backend API | 9080 | API REST Spring Boot |
+| PostgreSQL | 5454 | Base de datos |
+
+## 🛠️ Desarrollo Local
+
+### Backend
 
 ```bash
 cd backend
-mvn io.quarkus.platform:quarkus-maven-plugin:3.10.0:create \
-    -DprojectGroupId=com.autogestion \
-    -DprojectArtifactId=backend \
-    -DclassName="com.autogestion.api.GreetingResource" \
-    -Dpath="/hello"
-# Agregar extensiones necesarias (RESTEasy, JPA, PostgreSQL, etc.)
-mvn quarkus:add-extension -Dextensions="resteasy-reactive, hibernate-orm, jdbc-postgresql"
-cd ..
+./mvnw spring-boot:run
 ```
 
-#### Opción B: Spring Boot
+### Frontend (Shell)
 
 ```bash
-cd backend
-# Usar Spring Initializr o el siguiente comando si tienes Spring CLI
-spring init --dependencies=web,data-jpa,postgresql --java-version=17 --build=maven backend
-cd ..
+cd frontend/portal-autogestion
+npm install
+npm run dev
 ```
 
-### 5. Inicializar Base de Datos (PostgreSQL con Docker)
+### Microfrontend Facturación
 
 ```bash
-# Crear archivo db/init.sql con el modelo de datos sugerido
-# (Agregar scripts de creación de tablas y datos de prueba)
+cd frontend/mf-facturacion
+npm install
+npm run dev
 ```
 
-### 6. Crear Dockerfile para cada servicio
+### Microfrontend Cupos
 
-- shell-frontend/Dockerfile
-- mfe-cupos/Dockerfile
-- mfe-billing/Dockerfile
-- backend/Dockerfile
-- db/init.sql (para inicialización de la base de datos)
+```bash
+cd frontend/mf-cupos
+npm install
+npm run dev
+```
 
-### 7. Crear docker-compose.yml en la raíz
+## 📊 Datos de Prueba
+
+La base de datos incluye datos de prueba para 3 usuarios:
+
+- **Juan Pérez** (12345678) - Plan Básico
+- **Ana Gómez** (87654321) - Plan Premium
+- **Carlos Ruiz** (11223344) - Plan Empresarial
+
+## 🔧 Configuración
+
+### Variables de Entorno
+
+- `POSTGRES_USER`: Usuario de la base de datos
+- `POSTGRES_PASSWORD`: Contraseña de la base de datos
+- `POSTGRES_DB`: Nombre de la base de datos
+- `SPRING_DATASOURCE_URL`: URL de conexión a la base de datos
+- `NEXT_PUBLIC_API_URL`: URL del backend para los frontends
+
+### Puertos
+
+Los puertos pueden ser modificados en el archivo `docker-compose.yml`:
 
 ```yaml
-# Ejemplo básico (completar según avance del proyecto)
-version: '3.8'
-services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: autogestion
-      POSTGRES_PASSWORD: autogestion
-      POSTGRES_DB: autogestion
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-  # Agregar servicios para backend y microfrontends
+ports:
+  - "PUERTO_LOCAL:PUERTO_CONTAINER"
 ```
 
----
+## 📁 Estructura del Proyecto
 
-## Estrategia de Microfrontends
+```
+PruebaTecnica/
+├── backend/                
+├── front4/
+│   ├── portal-autogestion/ 
+│   ├── mf-facturacion/     
+│   └── mf-cupos/           
+├── db/
+│   └── init.sql           
+├── docker-compose.yml     
+└── README.md              
+```
 
-- **Shell Application:** Orquesta la navegación global, el header común y el lazy loading de los microfrontends.
-- **Microfrontends:** Cada módulo (Cupos, Facturación) es un proyecto Next.js independiente, integrado mediante Module Federation o Multi Zone (según la solución elegida).
-- **Comunicación:** Los microfrontends se comunican con el backend centralizado a través de APIs RESTful.
-- **Despliegue:** Cada microfrontend y el backend se ejecutan en contenedores Docker independientes, orquestados con Docker Compose.
+## 🐳 Comandos Docker Útiles
 
----
+### Ver logs de un servicio específico
+```bash
+docker-compose logs -f backend
+docker-compose logs -f shell-frontend
+```
 
-## Tecnologías
+### Reiniciar un servicio
+```bash
+docker-compose restart backend
+```
 
-- **Frontend:** React 18+, Next.js 14+, TypeScript 5.x, Tailwind CSS, Zustand/Redux Toolkit, Module Federation/Multi Zone
-- **Backend:** Quarkus 3.x o Spring Boot 3.x, Java 17+, JPA/Hibernate/Panache
-- **Base de Datos:** PostgreSQL (contenedorizado)
-- **Infraestructura:** Docker, Docker Compose
+### Detener todos los servicios
+```bash
+docker-compose down
+```
 
----
+### Detener y eliminar volúmenes
+```bash
+docker-compose down -v
+```
 
-## Comandos para Levantar la Aplicación
+### Reconstruir imágenes
+```bash
+docker-compose build --no-cache
+```
+
+
+### Logs y Debugging
 
 ```bash
-# Levantar toda la aplicación
-# (Asegúrate de tener Docker y Docker Compose instalados)
-docker-compose up --build
+# Ver todos los logs
+docker-compose logs
+
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f backend
 ```
 
----
+## 📝 API Endpoints
 
-## Siguientes Pasos
+### Usuarios
 
-- [ ] Inicializar cada proyecto con los comandos anteriores
-- [ ] Configurar integración entre Shell y microfrontends (Module Federation/Multi Zone)
-- [ ] Implementar endpoints RESTful en el backend
-- [ ] Crear scripts de base de datos y datos de prueba
-- [ ] Crear Dockerfile para cada servicio
-- [ ] Completar docker-compose.yml para todos los servicios
-- [ ] Documentar endpoints y comandos en este README
+#### Obtener usuario por número de identificación
+- **GET** `/api/users/{numberId}`
+- **Descripción**: Obtiene la información completa de un usuario por su número de identificación
+- **Parámetros**:
+  - `numberId` Número de identificación del usuario
+- **Respuesta**: Objeto `User` con información completa del usuario y su plan
 
----
+#### Obtener uso actual de un usuario
+- **GET** `/api/users/{userId}/usage`
+- **Descripción**: Obtiene el uso actual más reciente de un usuario
+- **Parámetros**:
+  - `userId` ID del usuario
+- **Respuesta**: Objeto `Usage` con el consumo actual de datos, minutos y SMS
 
-## Justificación de la Estrategia de Microfrontends
+#### Obtener historial de uso de un usuario
+- **GET** `/api/users/{userId}/usage/history`
+- **Descripción**: Obtiene todo el historial de uso de un usuario
+- **Parámetros**:
+  - `userId` ID del usuario
+- **Respuesta**: Array de objetos `Usage` ordenados por fecha de actualización
 
-- Permite el desarrollo y despliegue independiente de cada módulo.
-- Facilita la escalabilidad y el mantenimiento.
-- Cada equipo puede trabajar con su propio stack y ciclo de vida.
-- La Shell Application centraliza la navegación y la experiencia de usuario.
+### Facturas
 
----
+#### Obtener facturas de un usuario
+- **GET** `/api/bills/users/{userId}`
+- **Descripción**: Obtiene las facturas de un usuario, con filtros opcionales por fecha
+- **Parámetros**:
+  - `userId` ID del usuario
+  - `startdate` Fecha de inicio para filtrar
+  - `enddate` Fecha de fin para filtrar
+- **Respuesta**: Array de objetos `Bill` con información de las facturas
 
-## Contacto
+#### Descargar factura
+- **GET** `/api/bills/{billId}/download`
+- **Descripción**: Descarga una factura en el formato especificado
+- **Parámetros**:
+  - `billId` ID de la factura
+  - `format` Formato de descarga (default: "json")
+- **Respuesta**: Archivo binario de la factura
 
-Para dudas o sugerencias, contacta a [tu correo].
+## 📊 Esquemas de Datos
+
+### User
+```json
+{
+  "id": "integer",
+  "accountNumber": "string",
+  "numberId": "string", 
+  "phoneNumber": "string",
+  "name": "string",
+  "email": "string",
+  "plan": "Plan",
+  "createdAt": "date-time"
+}
+```
+
+### Plan
+```json
+{
+  "id": "integer",
+  "name": "string",
+  "price": "number",
+  "dataGb": "integer",
+  "minutes": "integer", 
+  "sms": "integer",
+  "description": "string"
+}
+```
+
+### Usage
+```json
+{
+  "id": "integer",
+  "user": "User",
+  "dataGb": "integer",
+  "minutes": "integer",
+  "sms": "integer", 
+  "lastUpdated": "date-time"
+}
+```
+
+### Bill
+```json
+{
+  "id": "integer",
+  "user": "User",
+  "plan": "Plan",
+  "period": "string",
+  "amount": "number",
+  "dueDate": "date",
+  "issueDate": "date",
+  "createdAt": "date-time"
+}
+```
+
+## 🔗 URL Base
+- **Desarrollo**: http://localhost:9080
+- **Swagger UI**: http://localhost:9080/swagger-ui.html
+- **OpenAPI JSON**: http://localhost:9080/v3/api-docs
+

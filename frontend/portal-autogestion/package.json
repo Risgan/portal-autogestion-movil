@@ -1,0 +1,48 @@
+{
+  "name": "portal-autogestion",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development rspack serve",
+    "build": "cross-env NODE_ENV=production rspack build",
+    "build:dev": "cross-env NODE_ENV=development rspack build",
+    "build:start": "cd dist && rspack serve",
+    "dev": "next dev"
+  },
+  "devDependencies": {
+    "@rspack/cli": "~1.2.0",
+    "@rspack/core": "~1.2.0",
+    "@rspack/plugin-react-refresh": "~1.0.1",
+    "@tailwindcss/postcss": "^4.0.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.1.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
+    "postcss": "^8.2.1",
+    "postcss-loader": "^8.0.0",
+    "react-refresh": "^0.14.0",
+    "tailwindcss": "^4.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@module-federation/enhanced": "^0.8.9",
+    "@radix-ui/react-accordion": "^1.2.11",
+    "@radix-ui/react-alert-dialog": "^1.1.14",
+    "@radix-ui/react-aspect-ratio": "^1.1.7",
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-context-menu": "^2.2.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tooltip": "^1.2.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "embla-carousel-react": "^8.6.0",
+    "lucide-react": "^0.525.0",
+    "react": "^18.2.0",
+    "react-day-picker": "^9.8.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^3.3.1"
+  }
+}

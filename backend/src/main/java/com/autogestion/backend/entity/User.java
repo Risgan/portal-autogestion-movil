@@ -33,7 +33,7 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
+    
     public User() {}
 
     public User(Long id, String accountNumber, String numberId, String phoneNumber, String name, String email, Plan plan, LocalDateTime createdAt) {

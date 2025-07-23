@@ -5,6 +5,7 @@ import com.autogestion.backend.repository.UsageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class UsageService {
@@ -15,6 +16,10 @@ public class UsageService {
     }
 
     public Optional<Usage> getByUserId(Long userId) {
-        return usageRepository.findByUserId(userId);
+        return usageRepository.findLatestByUserId(userId);
+    }
+
+    public List<Usage> getAllByUserId(Long userId) {
+        return usageRepository.findAllByUserIdOrderByLastUpdatedDesc(userId);
     }
 } 

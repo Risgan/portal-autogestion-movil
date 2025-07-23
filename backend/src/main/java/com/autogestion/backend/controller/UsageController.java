@@ -5,6 +5,8 @@ import com.autogestion.backend.service.UsageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users/{userId}/usage")
 public class UsageController {
@@ -20,4 +22,13 @@ public class UsageController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+     @GetMapping("/history")
+     public ResponseEntity<List<Usage>> getUsageHistoryByUserId(@PathVariable Long userId) {
+         List<Usage> history = usageService.getAllByUserId(userId);
+         if (history.isEmpty()) {
+             return ResponseEntity.notFound().build();
+         }
+         return ResponseEntity.ok(history);
+     }
 } 

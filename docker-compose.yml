@@ -1,5 +1,7 @@
 version: '3.8'
+
 services:
+  # Base de datos PostgreSQL
   db:
     image: postgres:16
     container_name: autogestion_db
@@ -11,4 +13,82 @@ services:
       - "5454:5432"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: unless-stopped 
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - autogestion-network
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: autogestion_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/autogestion
+      SPRING_DATASOURCE_USERNAME: autogestion
+      SPRING_DATASOURCE_PASSWORD: autogestion
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: false
+    ports:
+      - "9080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - autogestion-network
+
+  # Shell Frontend (Host)
+  shell-frontend:
+    build:
+      context: ./frontend/portal-autogestion
+      dockerfile: Dockerfile
+    container_name: autogestion_shell
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - autogestion-network
+  
+  # Microfrontend Cupos
+  mf-cupos:
+    build:
+      context: ./frontend/mf-cupos
+      dockerfile: Dockerfile
+    container_name: autogestion_mf_cupos
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+    ports:
+      - "3002:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - autogestion-network
+
+  # Microfrontend Facturación
+  mf-facturacion:
+    build:
+      context: ./frontend/mf-facturacion
+      dockerfile: Dockerfile
+    container_name: autogestion_mf_facturacion
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+    ports:
+      - "3003:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - autogestion-network
+
+volumes:
+  postgres_data:
+
+networks:
+  autogestion-network:
+    driver: bridge 
