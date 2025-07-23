@@ -1,6 +1,6 @@
 -- Crear tablas
 CREATE TABLE plans (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   price NUMERIC(10,2) NOT NULL,
   data_gb INTEGER NOT NULL,
@@ -10,20 +10,20 @@ CREATE TABLE plans (
 );
 
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   account_number VARCHAR(50) NOT NULL,
   number_id VARCHAR(20) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
-  plan_id INTEGER REFERENCES plans(id),
+  plan_id BIGINT REFERENCES plans(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE bills (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  plan_id INTEGER REFERENCES plans(id),
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id),
+  plan_id BIGINT REFERENCES plans(id),
   period VARCHAR(20) NOT NULL,
   amount NUMERIC(10,2) NOT NULL,
   due_date DATE NOT NULL,
@@ -32,8 +32,8 @@ CREATE TABLE bills (
 );
 
 CREATE TABLE usage (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT REFERENCES users(id),
   data_gb INTEGER NOT NULL,
   minutes INTEGER NOT NULL,
   sms INTEGER NOT NULL,

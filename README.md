@@ -191,6 +191,12 @@ docker-compose down -v
 docker-compose build --no-cache
 ```
 
+### Subir los volúmenes
+```bash
+docker-compose up -d  
+docker-compose up  
+```
+
 
 ### Logs y Debugging
 

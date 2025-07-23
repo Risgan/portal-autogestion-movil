@@ -14,8 +14,8 @@ COPY . .
 # Construir la aplicación
 RUN npm run build
 
-# Remover devDependencies para reducir el tamaño de la imagen
-RUN npm prune --production
+# Remover devDependencies excepto cross-env que se necesita para el start script
+RUN npm prune --production && npm install cross-env
 
 # Exponer puerto
 EXPOSE 3000
